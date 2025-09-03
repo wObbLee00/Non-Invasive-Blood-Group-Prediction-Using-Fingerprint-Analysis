@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Fingerprint Blood Group Prediction</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: #111; color: #fff; margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden; position: relative; min-height: 100vh;
+    }
+    h1 {
+      position: absolute; top: 30px; width: 100%;
+      text-align: center; color: #03DAC5;
+      margin: 0; z-index: 2;
+    }
+    #particles {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%; pointer-events: none; z-index: -1;
+    }
+    #main-wrapper {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100vh; padding-top: 80px; text-align: center;
+      position: relative; max-width: 900px; margin: 0 auto; z-index: 1;
+    }
+
+    /* Enlarged Button */
+    button {
+      position: relative; overflow: hidden;
+      background: #03DAC5; color: #000; border: none;
+      border-radius: 8px; padding: 16px 32px;
+      font-size: 1.2rem; font-weight: bold;
+      cursor: pointer; transition: 0.3s; z-index: 1;
+    }
+    button:hover { transform: scale(1.07); }
+    button::after {
+      content: ""; position: absolute;
+      top: -3px; left: -3px; right: -3px; bottom: -3px;
+      border-radius: 10px;
+      background: linear-gradient(45deg, #03DAC5, #00bfa5);
+      filter: blur(10px); opacity: 0;
+      transition: opacity 0.3s ease; pointer-events: none;
+    }
+    button:hover::after {
+      opacity: 1; animation: neon-border 1.5s infinite alternate;
+    }
+    @keyframes neon-border {
+      0%,100% { opacity: 0.7; } 50% { opacity: 1; }
+    }
+
+    /* Timeline & Progress Bar bigger */
+    #pipeline { display: none; opacity: 0; transition: opacity 0.5s ease; }
+    #pipeline.show { display: block; opacity: 1; }
+    .timeline {
+      display: flex; justify-content: center; gap: 1.2rem;
+      margin-bottom: 1.5rem; position: relative;
+    }
+    .stage {
+      color: #999; font-size: 1.3rem; transition: color 0.3s;
+    }
+    .stage.active {
+      color: #03DAC5; font-weight: bold;
+    }
+    .timeline::before {
+      content: ''; position: absolute; top: 50%;
+      left: 5%; width: 90%; height: 3px;
+      background: transparent; transform: translateY(-50%);
+    }
+    .progress-bar-container {
+      width: 80%; height: 16px; background: #333;
+      margin: 1rem auto; border-radius: 8px; overflow: hidden;
+    }
+    .progress-bar {
+      width: 0%; height: 100%;
+      background: linear-gradient(90deg, #03DAC5, #00bfa5);
+      box-shadow: 0 0 18px #03DAC5;
+      transition: width 1s ease-in-out;
+    }
+
+    /* Results grid unchanged */
+    #results {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      margin-top: 1.5rem;
+      width: calc(5 * 150px + 4 * 1rem);
+      justify-content: center;
+    }
+    .card {
+      flex: 0 0 150px; background: rgba(20,20,25,0.7);
+      backdrop-filter: blur(8px); border: 1px solid rgba(3,218,197,0.5);
+      border-radius: 10px; padding: 12px; cursor: pointer;
+      opacity: 0; transform: translateY(20px); transition: transform 0.3s;
+      text-align: center;
+    }
+    .card:hover { box-shadow: 0 0 15px #03dac5; }
+    .card img {
+      width: 100px; height: 100px; object-fit: cover;
+      margin: auto; border-radius: 6px;
+    }
+
+    /* Single view position unchanged */
+    #single-view {
+      display: none; margin-top: calc(30px + 3rem); padding-top: 1rem;
+      text-align: center; z-index: 1;
+    }
+    #single-img {
+      width: 180px; height: 180px;
+      border: 3px solid #03DAC5; border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    canvas#pie-chart {
+      margin-top: 1rem; max-width: 300px;
+    }
+
+    /* Neon pulsing label unchanged */
+    #final-label {
+      font-size: 2.5rem; color: #03DAC5;
+      animation: neonPulse 1.5s infinite alternate;
+    }
+    @keyframes neonPulse {
+      0% { text-shadow: 0 0 5px #03DAC5, 0 0 10px #00bfa5; }
+      50% { text-shadow: 0 0 15px #00e0ff, 0 0 20px #00ffc3; }
+      100% { text-shadow: 0 0 25px #00ff7f, 0 0 30px #00d4ff; }
+    }
+
+    @media(max-width:800px) {
+      #results {
+        width: calc(3 * 150px + 2 * 1rem);
+      }
+    }
+    @media(max-width:500px) {
+      #results {
+        width: calc(2 * 130px + 1 * 1rem);
+      }
+      .card { flex: 0 0 130px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <h1>🧬 Fingerprint Blood Group Prediction</h1>
+  <div id="main-wrapper">
+    <div id="button-wrapper">
+      <button onclick="triggerPredict()">Choose 10 Fingerprints</button>
+    </div>
+    <div id="pipeline">
+      <div class="timeline">
+        <span class="stage" id="stage1">🧹 Preprocessing</span>
+        <span class="stage" id="stage2">🔍 Feature Extraction</span>
+        <span class="stage" id="stage3">🧠 Mapping</span>
+        <span class="stage" id="stage4">📊 Prediction</span>
+        <span class="stage" id="stage5">🔗 Aggregation</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+    </div>
+    <div id="result-wrapper" style="display:none;">
+      <div id="final-result">
+        <h2>🩸 Predicted Blood Group: <span id="final-label"></span></h2>
+        <button onclick="resetApp()">🔁 Do it again</button>
+        <button onclick="showDetails()">📋 Details</button>
+      </div>
+    </div>
+    <div id="results"></div>
+    <div id="single-view">
+      <img id="single-img" alt="Fingerprint">
+      <h3 id="single-label"></h3>
+      <canvas id="pie-chart" width="300" height="300"></canvas>
+      <button onclick="backToDetails()">🔙 Back</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.4.0/tsparticles.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tsParticles.load("particles", {
+      fpsLimit: 60,
+      background: { color: "#111" },
+      particles: {
+        number:{ value:40, density:{ enable:true, area:800 }},
+        color:{ value:["#03DAC5","#00bfa5"] },
+        shape:{ type:"circle" },
+        opacity:{ value:0.6, random:true },
+        size:{ value:3, random:{ enable:true, minimumValue:1 }},
+        move:{ enable:true, speed:1 },
+        links:{ enable:true, distance:120, color:"#03DAC5", opacity:0.4, width:1 }
+      },
+      detectRetina: true
+    });
+
+    async function triggerPredict(){
+      clearAllViews();
+      const sel = await fetch('/select-images',{ method:'POST' });
+      const j = await sel.json();
+      if(j.error) { alert("❌ "+j.error); return; }
+      document.getElementById("button-wrapper").style.display='none';
+      document.getElementById("pipeline").style.display = 'block';
+      document.getElementById("pipeline").classList.add("show");
+      const stages=["stage1","stage2","stage3","stage4","stage5"];
+      stages.forEach((id,i)=> setTimeout(()=>{
+        document.getElementById(id).classList.add('active');
+        document.getElementById("progress").style.width = `${((i+1)/stages.length)*100}%`;
+      }, i*1000));
+      setTimeout(async()=>{
+        const p = await fetch('/predict',{ method:'POST', headers:{'Content-Type':'application/json'} });
+        const ret = await p.json();
+        if(ret.error) { alert("❌ "+ret.error); return; }
+        showFinal(ret);
+        window._fingerprintResults = ret.predictions;
+      }, stages.length*1000 + 500);
+    }
+
+    function showFinal(res){
+      document.getElementById("pipeline").style.display='none';
+      document.getElementById("result-wrapper").style.display='block';
+      animateTyping(document.getElementById("final-label"), res.final_prediction, 100);
+    }
+    function animateTyping(el, text, speed){
+      el.innerText=''; let i=0;
+      const id=setInterval(()=>{
+        if(i>=text.length){ clearInterval(id); return; }
+        el.innerText += text.charAt(i++);
+      }, speed);
+    }
+    function clearAllViews(){
+      document.getElementById("results").innerHTML='';
+      document.getElementById("results").style.display='none';
+      document.getElementById("single-view").style.display='none';
+      document.getElementById("pipeline").classList.remove('show');
+      document.getElementById("result-wrapper").style.display='none';
+      document.querySelectorAll('.stage').forEach(e=>e.classList.remove('active'));
+      document.getElementById("progress").style.width='0%';
+    }
+    function resetApp(){
+      clearAllViews();
+      document.getElementById("button-wrapper").style.display='block';
+    }
+    function showDetails(){
+      document.getElementById("final-result").style.display='none';
+      displayResults(window._fingerprintResults);
+    }
+    function displayResults(predictions){
+      const ctr=document.getElementById("results");
+      ctr.innerHTML=''; ctr.style.display='flex';
+      predictions.forEach((item,i)=>{
+        const card=document.createElement('div'); card.className='card';
+        const img=document.createElement('img'); img.src=`/static/input_images/${item.filename}`;
+        const lbl=document.createElement('h3'); lbl.innerText=`#${i+1}: ${item.label}`;
+        const p=document.createElement('p'); p.innerText=`Confidence: ${(Math.max(...item.confidence)*100).toFixed(2)}%`;
+        card.append(img,lbl,p);
+        card.onclick = ()=> showSingleView(item);
+        setTimeout(()=>card.style.opacity='1', i*150);
+        ctr.append(card);
+      });
+      VanillaTilt.init(document.querySelectorAll('.card'),{
+        max:6, speed:400, glare:true, "max-glare":0.2, scale:1.03
+      });
+    }
+    function showSingleView(item){
+      document.getElementById("results").style.display='none';
+      document.getElementById("single-img").src=`/static/input_images/${item.filename}`;
+      document.getElementById("single-label").innerText=`Prediction: ${item.label}`;
+      document.getElementById("single-view").style.display='block';
+      const ctx=document.getElementById('pie-chart').getContext('2d');
+      if(window._pieChart) window._pieChart.destroy();
+      window._pieChart=new Chart(ctx,{
+        type:'pie',
+        data:{
+          labels:['A+','A-','AB+','AB-','B+','B-','O+','O-'],
+          datasets:[{
+            data:item.confidence.map(c=> (c*100).toFixed(2)),
+            backgroundColor:['#FF0099','#99FF00','#00FF99','#0099FF','#FFAA00','#AA00FF','#00DDFF','#FF0055'],
+            borderColor:'#111', borderWidth:2
+          }]
+        },
+        options: {
+        plugins: {
+            legend: {
+            position: 'bottom',
+            labels: {
+                color: '#fff',
+                boxWidth: 14,
+                font: {
+                size: 16, // 🔥 Bigger font size
+                weight: 'bold'
+                }
+            }
+            }
+        }
+        }
+      });
+    }
+    function backToDetails(){
+      document.getElementById("single-view").style.display='none';
+      document.getElementById("results").style.display='flex';
+    }
+  </script>
+</body>
+</html>
