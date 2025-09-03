@@ -34,8 +34,9 @@ fingerprint-blood-group-prediction/
 ├── notebooks/                  # Jupyter notebooks (training, evaluation)
 │   └── training\_efficientnet.ipynb
 │
-├── model/                      # Trained models (via Git LFS or Releases)
-│   └── final\_best\_efficientnetb0\_model\_final.keras
+├── model/
+│   ├── final_best_efficientnetb0_model_final.keras  # trained model (already included)
+│   └── Model Training and Testing Code.ipynb                  # training & evaluation notebook
 │
 ├── utils/                      # Helper scripts
 │   └── predict.py              # Inference helpers
@@ -57,8 +58,8 @@ fingerprint-blood-group-prediction/
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/wObbLee00/fingerprint-blood-group-prediction.git
-cd fingerprint-blood-group-prediction
+git clone https://github.com/wObbLee00/Non-Invasive-Blood-Group-Prediction-Using-Fingerprint-Analysis.git
+cd Non-Invasive-Blood-Group-Prediction-Using-Fingerprint-Analysis
 ````
 
 ### 2. Create virtual environment & install requirements
@@ -66,16 +67,13 @@ cd fingerprint-blood-group-prediction
 ```bash
 python -m venv venv
 # activate
-venv\Scripts\activate   # Windows
+venv\Scripts\activate  # Windows
 source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-### 3. Place model file
-
-* Download the trained model from [Releases](https://github.com/wObbLee00/fingerprint-blood-group-prediction/releases)
-* Put it into the `model/` directory.
-
+### 3. Model file
+The trained model is **already included** in this repository at: `model/final_best_efficientnetb0_model_final.keras`
 ### 4. Run the demo
 
 ```bash
@@ -88,7 +86,7 @@ python app.py
 
 ## 📊 Training
 
-* Open `notebooks/training_efficientnet.ipynb` in Jupyter.
+* Open `Model Training and Testing Code.ipynb` in Jupyter.
 * Requires the SOCOFing dataset (not included due to size).
 * Trains EfficientNetB0 with preprocessing, normalization, and dropout.
 * Evaluated with accuracy, precision/recall, confusion matrix.
