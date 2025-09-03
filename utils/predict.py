@@ -4,7 +4,7 @@ import cv2
 import tensorflow as tf
 
 # Load model once
-MODEL_PATH = r'C:\Users\dell\Desktop\fingeprint_demo\model\final_best_efficientnetb0_model_final.keras'
+MODEL_PATH = Path(__file__).parent / "model" / "final_best_efficientnetb0_model_final.keras"
 model = tf.keras.models.load_model(MODEL_PATH)
 
 CLASS_LABELS = ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-']
