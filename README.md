@@ -6,6 +6,11 @@ It includes **model training**, a trained model, and a **Flask-based demo UI**.
 
 ---
 
+## 🎥 Demo Video
+[![Watch the demo](https://img.youtube.com/vi/bCNX2WjBYcI/0.jpg)](https://youtu.be/bCNX2WjBYcI)
+
+---
+
 ## 📌 Project Overview
 - **Goal**: Predict human blood groups using fingerprint images in a non-invasive manner.  
 - **Dataset**: SOCOFing fingerprint dataset (synthetically labeled).  
