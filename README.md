@@ -125,7 +125,3 @@ This project is licensed under the MIT License – see the [LICENSE](LICENSE) fi
 * **Team**: Habiba Fiaz, Saad Jamshaid, Zahra Akhtar, Wabil Nadeem Butt
 
 ---
-
-```
-
----
