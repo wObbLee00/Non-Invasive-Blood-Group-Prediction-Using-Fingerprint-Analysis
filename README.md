@@ -29,11 +29,7 @@ It includes **model training**, a trained model, and a **Flask-based demo UI**.
 ## 📂 Project Structure
 ```
 
-fingerprint-blood-group-prediction/
-│
-├── notebooks/                  # Jupyter notebooks (training, evaluation)
-│   └── training\_efficientnet.ipynb
-│
+Non-Invasive-Blood-Group-Prediction-Using-Fingerprint-Analysis/
 ├── model/
 │   ├── final_best_efficientnetb0_model_final.keras  # trained model (already included)
 │   └── Model Training and Testing Code.ipynb                  # training & evaluation notebook
