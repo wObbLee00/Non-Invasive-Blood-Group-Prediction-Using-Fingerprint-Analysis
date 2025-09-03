@@ -1,6 +1,3 @@
-# Non-Invasive Blood Group Prediction Using Fingerprint Analysis
-End-to-end system for non-invasive blood group prediction using fingerprint images, built with Python, TensorFlow, and Flask.
-
 # 🧬 Non-Invasive Blood Group Prediction Using Fingerprint Analysis
 
 This repository contains the source code, training notebook, and demo system for my **Final Year Project (FYP)**:  
